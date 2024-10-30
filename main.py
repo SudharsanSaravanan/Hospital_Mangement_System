@@ -129,4 +129,3 @@ hospital_system.discharge_patient("Room1")
 patient2 = Patient(2, "Jane Smith", 2, "Pneumonia", 70, "Female")
 hospital_system.add_patient(patient2)
 hospital_system.admit_patient(patient2, "Room2")
-hgfds
