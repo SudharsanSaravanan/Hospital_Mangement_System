@@ -12,7 +12,7 @@ class Patient:
         self.age = age
         self.gender = gender
 
-    def __lt__(self, other):
+    def __lt__(self, other): #Objects of same class can be compared based on given parameters. lt stands for "less than".
         if self.severity == other.severity:
             if self.age == other.age:
                 return self.arrival_time < other.arrival_time
