@@ -101,7 +101,7 @@ This project leverages multiple data structures to ensure optimal efficiency and
 - [Chirag Keshav](https://github.com/Chirag-Keshav)
 - [Devansh Dewan](https://github.com/golok7)
 - [Sanjay A R](https://github.com/sanj4git)
-- 
+- [Sanjay A K](https://github.com/sanjay-pokee)
 
 ---
 
