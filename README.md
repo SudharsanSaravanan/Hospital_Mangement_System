@@ -98,7 +98,7 @@ This project leverages multiple data structures to ensure optimal efficiency and
 
 ## Contributors
 
-- [Your Name](https://github.com/yourusername)
+- [Chirag Keshav](https://github.com/Chirag-Keshav)
 
 ---
 
