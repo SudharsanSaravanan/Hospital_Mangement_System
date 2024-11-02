@@ -7,9 +7,8 @@ A **Patient Priority Management System** developed as a **Data Structures and Al
 - [Overview](#overview)
 - [Features](#features)
 - [Data Structures Used](#data-structures-used)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
+- [Methods and Usage](#methods-and-usage)
+- [Time Complexity](#time-complexity)
 - [Contributors](#contributors)
 - [License](#license)
 
@@ -18,11 +17,14 @@ A **Patient Priority Management System** developed as a **Data Structures and Al
 ## Overview
 
 In healthcare facilities, managing patient priority and room allocation can be a challenging task, especially during high-demand times. This project addresses this by developing a **Patient Priority Management System** that:
-1. Prioritizes patients based on illness severity, age, and arrival time.
+
+1. Prioritizes patients based on severity, age, and arrival time.
 2. Allocates rooms based on availability and proximity.
 3. Provides patient search capabilities by unique ID and condition.
 
 This project leverages multiple data structures to ensure optimal efficiency and response times for each feature.
+
+---
 
 ## Features
 
@@ -32,176 +34,76 @@ This project leverages multiple data structures to ensure optimal efficiency and
 - **Manage Same-Severity Patients**: Lists patients with the same severity, ordered by arrival time.
 - **Patient Log**: Maintains a record of admitted and discharged patients.
 
-import heapq
-import time
+---
 
-# Patient class (updated with age and gender attributes)
-class Patient:
-    def __init__(self, patient_id, name, severity, disease, age, gender):
-        self.patient_id = patient_id
-        self.name = name
-        self.severity = severity
-        self.arrival_time = time.time()
-        self.disease = disease
-        self.age = age
-        self.gender = gender
+## Data Structures Used
 
-    def __lt__(self, other):  # Comparison based on severity, age, and arrival time
-        if self.severity == other.severity:
-            if self.age == other.age:
-                return self.arrival_time < other.arrival_time
-            return self.age > other.age
-        return self.severity < other.severity
+1. **Min-Heap Priority Queue**
+   - **Purpose**: Manages patient priority based on severity, age, and arrival time.
+   - **Implementation**: Python's `heapq` library, with patients stored in a list and sorted by custom comparison operators.
 
+2. **Graph (Adjacency List)**
+   - **Purpose**: Represents hospital rooms and corridors, with nodes as rooms and edges as corridors.
+   - **Implementation**: `RoomNode` objects store room connections and vacancies. Shortest path is found using **Dijkstra’s algorithm**.
 
-# Graph Node representing a hospital room
-class RoomNode:
-    def __init__(self, room_id, vacancy=True):
-        self.room_id = room_id
-        self.vacancy = vacancy
-        self.neighbors = {}
-        self.patient_assigned = None  # Track the patient assigned to this room
+3. **Binary Search Tree (BST)**
+   - **Purpose**: Stores patients by unique ID for efficient searching.
+   - **Implementation**: Standard BST structure with patient nodes containing IDs for fast retrieval and lookup.
 
-    def add_neighbor(self, neighbor_room, distance):
-        self.neighbors[neighbor_room] = distance
+---
 
+## Methods and Usage
 
-# Hospital Graph with Dijkstra's Algorithm
-class HospitalGraph:
-    def __init__(self):
-        self.rooms = {}
+1. **`add_patient(self, patient)`**
+   - **Description**: Adds a new patient to the priority queue.
+   - **Returns**: None
 
-    def add_room(self, room_id, vacancy=True):
-        self.rooms[room_id] = RoomNode(room_id, vacancy)
+2. **`admit_patient(self, patient)`**
+   - **Description**: Finds the nearest vacant room from "Reception" and assigns it to the patient.
+   - **Returns**: None
 
-    def add_corridor(self, room1_id, room2_id, distance):
-        if room1_id in self.rooms and room2_id in self.rooms:
-            self.rooms[room1_id].add_neighbor(self.rooms[room2_id], distance)
-            self.rooms[room2_id].add_neighbor(self.rooms[room1_id], distance)
+3. **`discharge_patient(self, room_id)`**
+   - **Description**: Frees a room and removes the patient from the priority queue.
+   - **Returns**: None
 
-    def find_nearest_vacant_room(self, start_room_id="Reception"):
-        distances = {room_id: float('inf') for room_id in self.rooms}
-        distances[start_room_id] = 0
-        min_heap = [(0, start_room_id)]
+4. **`find_nearest_vacant_room(self, start_room_id)`**
+   - **Description**: Uses Dijkstra's algorithm to find the nearest vacant room from the starting point.
+   - **Returns**: `RoomNode` (nearest vacant room)
 
-        while min_heap:
-            current_distance, current_room_id = heapq.heappop(min_heap)
-            current_room = self.rooms[current_room_id]
+5. **`remove_patient(self, patient_id)`**
+   - **Description**: Removes a patient from the priority queue.
+   - **Returns**: None
 
-            # If the nearest vacant room is found, return it
-            if current_room.vacancy:
-                return current_room
+6. **`display_patients_in_priority_order(self)`**
+   - **Description**: Prints all patients in the priority queue in ascending order.
+   - **Returns**: None
 
-            for neighbor, weight in current_room.neighbors.items():
-                distance = current_distance + weight
-                if distance < distances[neighbor.room_id]:
-                    distances[neighbor.room_id] = distance
-                    heapq.heappush(min_heap, (distance, neighbor.room_id))
-        return None  # No vacant rooms found
+7. **`room_assigned(self)`**
+   - **Description**: Displays the current room assignments and vacancy status.
+   - **Returns**: None
 
+---
 
-# PriorityQueue class using min-heap for priority-based patient management
-class PriorityQueue:
-    def __init__(self):
-        self.heap = []
+## Time Complexity
 
-    def add_patient(self, patient):
-        heapq.heappush(self.heap, patient)
-        print(f"Patient {patient.name} with severity {patient.severity} added to priority queue.")
+- **`add_patient(self, patient)`**: **O(log n)** - Insertion in a min-heap requires maintaining heap order.
+- **`admit_patient(self, patient)`**: **O(E + V log V)** - Uses Dijkstra's algorithm to find the nearest vacant room, where *V* is the number of rooms and *E* is the number of corridors.
+- **`discharge_patient(self, room_id)`**: **O(n)** - Rebuilds the heap after removing a patient, requiring traversal of all patients in the priority queue.
+- **`find_nearest_vacant_room(self, start_room_id)`**: **O(E + V log V)** - Dijkstra's algorithm for finding the shortest path to a vacant room.
+- **`remove_patient(self, patient_id)`**: **O(n)** - Searches and rebuilds the heap after removing a patient by ID.
+- **`display_patients_in_priority_order(self)`**: **O(n log n)** - Displays patients in priority order, requiring sorting of the min-heap.
+- **`room_assigned(self)`**: **O(V)** - Traverses the list of rooms to display assignments, where *V* is the number of rooms.
 
-    def remove_patient(self, patient_id):
-        # Rebuild the heap without the discharged patient
-        self.heap = [patient for patient in self.heap if patient.patient_id != patient_id]
-        heapq.heapify(self.heap)  # Restore heap property
+---
 
-    def get_next_patient(self):
-        if self.heap:
-            return heapq.heappop(self.heap)
-        return None
-    
-    def display_patients_in_priority_order(self):
-        print("Patients in priority order:")
-        for patient in heapq.nsmallest(len(self.heap), self.heap):
-            print(f"Patient ID: {patient.patient_id}, Name: {patient.name}, Severity: {patient.severity}, Age: {patient.age}, Arrival Time: {patient.arrival_time}")
+## Contributors
 
+- [Your Name](https://github.com/yourusername)
 
-# Managing patient room admission based on vacancy
-class HospitalManagementSystem:
-    def __init__(self):
-        self.pq = PriorityQueue()
-        self.hospital_graph = HospitalGraph()
-        self.hospital_graph.add_room("Reception", vacancy=False)  # Adding a reception room
+---
 
-    def add_patient(self, patient):
-        self.pq.add_patient(patient)
+## License
 
-    def admit_patient(self, patient):
-        # Start the search from "Reception" to find the nearest vacant room
-        vacant_room = self.hospital_graph.find_nearest_vacant_room("Reception")
-        if vacant_room:
-            vacant_room.vacancy = False
-            vacant_room.patient_assigned = patient  # Assign the patient to this room
-            print(f"Patient {patient.name} admitted to room {vacant_room.room_id}.")
-        else:
-            print("No vacant rooms available at this time.")
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-    def discharge_patient(self, room_id):
-        if room_id in self.hospital_graph.rooms:
-            room = self.hospital_graph.rooms[room_id]
-            if room.patient_assigned:
-                patient_id = room.patient_assigned.patient_id
-                room.vacancy = True
-                room.patient_assigned = None  # Remove the patient from the room
-                print(f"Room {room_id} is now vacant.")
-
-                # Remove the patient from the priority queue
-                self.pq.remove_patient(patient_id)
-                print(f"Patient with ID {patient_id} has been discharged and removed from the hospital (priority queue).")
-            else:
-                print(f"No patient is currently assigned to room {room_id}.")
-
-    def room_assigned(self):
-        print("Room Assignments:")
-        for room_id, room in self.hospital_graph.rooms.items():
-            if room.patient_assigned:
-                patient = room.patient_assigned
-                print(f"Room {room_id} -> Patient ID: {patient.patient_id}, Name: {patient.name}, Severity: {patient.severity}")
-            else:
-                print(f"Room {room_id} is currently vacant.")
-
-
-# Testing the Hospital Management System
-hospital_system = HospitalManagementSystem()
-
-# Set up rooms and corridors
-hospital_system.hospital_graph.add_room("Room1", vacancy=True)
-hospital_system.hospital_graph.add_room("Room2", vacancy=True)
-hospital_system.hospital_graph.add_room("Room3", vacancy=False)  # Already occupied room
-
-hospital_system.hospital_graph.add_corridor("Reception", "Room1", 3)
-hospital_system.hospital_graph.add_corridor("Room1", "Room2", 5)
-hospital_system.hospital_graph.add_corridor("Room2", "Room3", 10)
-
-# Creating and adding patients
-patient1 = Patient(1, "John Doe", 3, "Flu", 65, "Male")
-hospital_system.add_patient(patient1)
-
-# Admit patient to nearest vacant room from the reception
-hospital_system.admit_patient(patient1)
-
-# Show room assignments
-hospital_system.room_assigned()
-
-# Discharge a patient from a room
-hospital_system.discharge_patient("Room1")
-
-# Admit another patient
-patient2 = Patient(2, "Jane Smith", 2, "Pneumonia", 70, "Female")
-hospital_system.add_patient(patient2)
-hospital_system.admit_patient(patient2)
-
-# Display all patients in priority order
-hospital_system.pq.display_patients_in_priority_order()
-
-# Show updated room assignments
-hospital_system.room_assigned()
+--- 
