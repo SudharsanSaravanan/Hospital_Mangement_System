@@ -10,8 +10,6 @@ A **Patient Priority Management System** developed as a **Data Structures and Al
 - [Methods and Usage](#methods-and-usage)
 - [Time Complexity](#time-complexity)
 - [Contributors](#contributors)
-- [License](#license)
-
 ---
 
 ## Overview
@@ -102,11 +100,5 @@ This project leverages multiple data structures to ensure optimal efficiency and
 - [Devansh Dewan](https://github.com/golok7)
 - [Sanjay A R](https://github.com/sanj4git)
 - [Sanjay A K](https://github.com/sanjay-pokee)
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 --- 
